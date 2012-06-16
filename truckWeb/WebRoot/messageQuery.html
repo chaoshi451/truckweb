@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>新闻留言页面</title>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" >
+		$(function(){
+			$('#messageGrid').datagrid({
+				url: 'message/allByPage.nut',
+				title: '留言列表',
+				width: 800,
+				height: 'auto',
+				fitColumns: true,
+				nowrap:false,
+				rownumbers:true,
+				pagination:true,
+				columns:[[
+					{field:'id',hidden:true},
+					{field:'clientName',title:'客户名称',width:100},
+					{field:'createDate',title:'创建时间',width:80,align:'right'},
+					{field:'phone',title:'联系电话',width:80},
+					{field:'content', title:'留言内容', width: 200},
+					{field:'opt', title:'操作', width:80, align:'center',
+						formatter:function(value,rowData){
+							var delHref = '&nbsp;&nbsp;<a style="color:red;" href="javascript:delArticle('+rowData.id+');">删除</a>';
+							return delHref;
+						}
+					}
+				]]
+			});
+		});
+		function delArticle(messageId) {
+			$.messager.confirm('提示', '您确定概要删除此条信息?', function(r){
+				if (r){
+					ajax("message/delMessage.nut", {"messageId":messageId}, 
+						function(data, textStatus, XMLHttpRequest){
+							if (data) {
+								$.messager.alert('提示','删除留言内容成功！');
+								$('#messageGrid').datagrid("reload");
+							}
+					});
+				}
+			});
+		}
+	</script>
+  </head>
+  <body>
+	<table id="messageGrid"></table>
+  </body>
+</html>

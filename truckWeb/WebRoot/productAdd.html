@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>添加产品页</title>
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<style type="text/css">
+			#attTable{
+				width:640px;
+				height:100%;
+				font-size:12px;
+				padding: 0px;
+				border-collapse:collapse;
+			}
+			#attTable td{
+				border:1px solid green;
+				text-align: left;
+				height: 25px;
+			}
+		</style>
+		<script type="text/javascript">
+			var proContent;
+			//var proId = getUrlParamByKey("proId");
+			$(function(){
+				$('#p').panel({   
+					width:'1000',   
+					height:'auto',
+					title: '添加产品',
+					tools: [{   
+						iconCls:'icon-save',
+						handler: function(){
+							
+						}   
+					}]   
+				});
+				if(!CKEDITOR.instances.proText){  //判定proText是否存在 
+                    proContent= CKEDITOR.replace("proText");
+                }else{   
+                    var editor2 = CKEDITOR.instances['proText'];   
+					if(editor2) editor2.destroy(true); //销毁编辑器 proText,然后新增一个 
+                    proContent = CKEDITOR.replace('proText');   
+                }
+				$('#attributeType').combobox({
+					onSelect:function(record) {
+						var attTable = $('#attTable')[0];
+						if (attTable.rows.length == 0) {
+							var tr = attTable.insertRow(0);
+							var td1 = tr.insertCell(0);
+							td1.width = "10%";
+							td1.innerHTML = "类型";
+							var td2 = tr.insertCell(1);
+							td2.innerHTML = record.text;
+							td2.id = "typeTd_" + record.id;
+							var td3 = tr.insertCell(2);
+							td3.width = "10%";
+							td3.innerHTML = "操作";
+							$(td3).css({"text-align": "center"});
+						} else {
+							$.each(attTable.rows, function(i, r) {
+								var td = r.insertCell(r.cells.length-1);
+								if (i == 0) {
+									td.id = "typeTd_" + record.id;
+									td.innerHTML = record.text;
+								} else {
+									td.innerHTML = '<input class="inputText" type="text" name="att_'+ record.id +'_'+ $(r).attr("attId") +'" size="40"/>';
+								}
+							});
+						}
+					}, onUnselect: function (record) {
+						var attTable = $('#attTable')[0];
+						var delIndex;
+						if (attTable.rows[0].cells.length > 3) {
+							delIndex = $('#typeTd_'+record.id)[0].cellIndex;
+							$('#typeTd_'+record.id).remove();
+						} else {
+							attTable.deleteRow(0);
+						}
+						$.each(attTable.rows, function(i, r) {
+							if (delIndex) {
+								if(i != 0) {
+									r.deleteCell(delIndex);
+								}
+							} else {
+								attTable.deleteRow(0);
+							}
+						});
+					}
+				});
+			});
+			
+			// 添加汽车属性
+			var noCompares = [16, 17];
+			function addAttribute() {
+				var attTypes = $('#attributeType').combobox('getValues');
+				var attId = $('#attribute').combobox('getValue');
+				var attText = $('#attribute').combobox('getText');
+				var attTable = $('#attTable')[0];
+				var tr = attTable.insertRow(attTable.rows.length);
+				tr.id = "trAttId"+attId;
+				$(tr).attr("attId", attId);
+				tr.insertCell(0).innerHTML = attText + "：";
+				if ($.inArray(attId, noCompares) != -1) {
+					var tempTd = tr.insertCell(1);
+					tempTd.colSpan = attTypes.length;
+					tempTd.innerHTML = '<input class="inputText" type="text" name="att_'+ attTypes[0] +'_'+ attId +'" size="40"/>';
+				} else {
+					$.each(attTypes, function(i) {
+						tr.insertCell(i+1).innerHTML = '<input class="inputText" type="text" name="att_'+ attTypes[i] +'_'+ attId +'" size="40"/>';
+					});
+				}
+				var lastTd = tr.insertCell(attTypes.length+1);
+				lastTd.innerHTML = '<a href="javascript:delAttRow('+attId+');" class="easyui-linkbutton" plain="true" iconCls="icon-del">删除</a>';
+				$(lastTd).css({"text-align": "center"});
+			}
+			
+			function doSubmit() {
+				ajax("product/saveNewProduct.nut", {"product.name":$('#proName').val(),"product.author":$('#author').val(),"product.content":proContent.getData()}, 
+					function(data, textStatus, XMLHttpRequest){
+						var newProId = data;
+						// 产品属性数组
+						var attributeValues = [];
+						var attTypes = $('#attributeType').combobox('getValues');	// 属性类型
+						$.each(attTypes, function(i, v) {
+							var allAttr = $('#attTable :input[name^=att_'+v+']');
+							$.each(allAttr, function(j, _input) {
+								var tempArr = _input.name.split("_");
+								var attId = tempArr[tempArr.length - 1];
+								ajax("attribute/addAllAttr.nut", {"text":$(_input).val(), "attId": attId,"typeId":v,"proId":newProId}, 
+									function(data, textStatus, XMLHttpRequest){
+									if (data != "ok") {
+										alert("添加产品信息异常！");
+									}
+								});
+							});
+						});
+						// 上传附件
+						$.ajaxFileUpload({
+					    	url:'f/upload_mu.nut', //处理上传文件的服务端
+				            secureuri:false,
+				            fileElementId:'articlefile',
+				            dataType: 'json',
+				            isName: true,
+				            data:{
+					    		"proId":newProId
+					    	},
+					    	success: function (data, status){
+					    		if (data) {
+					    			$.messager.alert('提示','添加新产品成功！','info',function(){
+					    				var icon = getIcon('13');
+										$('#tabs').tabs('close', '添加产品');
+										addTab('产品列表', 'productQuery.html', icon);
+					    			});
+					    		}
+					    	},
+					    	error:function (XMLHttpRequest, textStatus, errorThrown) {
+					    		$.messager.alert('提示','添加新产品成功！','info',function(){
+					    				var icon = getIcon('13');
+										$('#tabs').tabs('close', '添加产品');
+										addTab('产品列表', 'productQuery.html', icon);
+					    		});
+							} 
+					    });
+				});
+			}
+			function delAttRow(attId) {
+				$("#trAttId"+attId).remove();
+			}
+			function addUpload() {
+				var html = '<span style="padding-left:60px;">&nbsp;&nbsp;<input maxlength="5" type="file" name="articlefile" />'+
+					'&nbsp;&nbsp;<a href="#" onclick="$(this).parent().remove();" class="easyui-linkbutton" iconCls="icon-remove">删除</a><br/></span>';
+				$("#p_uploadFile").append(html);
+			}
+	</script>
+	</head>
+	<body>
+		<div id="p" style="padding: 10px;">
+			<fieldset>
+				<form action="${ctx}/admin/article/add" method="post" id="mainform">
+					<!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
+					<p>
+						产品名称：<span style="color:red;">*</span>
+						<input class="easyui-validatebox inputText" type="text" id="proName" name="name" required="true"  size="50"/>
+						<span>产品名称如：东风尖头教练大王</span>
+						<br/>
+						<br />
+					</p>
+					<p>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作者：<span style="color:red;">*</span>
+						<input class="easyui-validatebox inputText" type="text" name="author" id="author" required="true" size="25"/>
+						<span>信息的发布人或者是作者</span>
+						<br />
+					</p>
+					<p>
+						<br />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类别：<span style="color:red;">*</span>
+						<input class="easyui-combobox" name="attributeType" id="attributeType" url="attribute/allTypes.nut" 
+							valueField="id" textField="text" multiple="true" panelHeight="auto" style="width:142px;"/>
+						<span>产品类别如：柴油机、汽油机，选择后可添加相应类别的详细属性</span>
+						<br />
+						<br />
+					</p>
+					<p>
+						添加属性：&nbsp;&nbsp;
+						<input class="easyui-combobox" name="attribute" id="attribute" url="attribute/allAtts.nut" valueField="id" 
+						panelHeight="auto" textField="text" style="width:142px;"/>
+						<a href="javascript:addAttribute();" class="easyui-linkbutton" plain="true" iconCls="icon-add">添加</a>
+						<span>选择属性后点击添加并补充其内容</span>
+						<br />
+					</p>
+					<table id="attTable">
+					</table>
+					<p id="p_uploadFile">
+						<br />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;图片：&nbsp;&nbsp;
+						<input maxlength="5" type="file" name="articlefile" />
+						<a href="javaScript:addUpload();" class="easyui-linkbutton" iconCls="icon-add">添加</a></br>
+					</p>
+					<p>
+						<br />
+						<textarea id="proText" rows="3" cols="10" class="ckeditor"></textarea>
+					</p>
+					<p>
+						<span style="text-align:right;width:900px;">
+							<a href="javaScript:doSubmit();" class="easyui-linkbutton" iconCls="icon-ok">提交</a>
+						</span>
+					</p>
+				</form>
+			</fieldset>
+		</div>
+	</body>
+</html>

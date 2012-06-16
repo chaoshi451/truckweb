@@ -1,0 +1,409 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="bookmark" href="images/dongfeng_1336903460.ico" />
+		<link rel="shortcut icon" href="images/dongfeng_1336903460.ico" />
+		<title>售后承诺|程力教练车</title>
+		<meta name="Keywords" content="湖北程力汽车有限公司是国内知名的教练车生产基地,公司生产全国最好的程力教练车、东风教练车、东风原厂尖头/平头教练车、半挂教练车、客车教练车、教练车配件等"/>
+		<meta name="Description" content="湖北程力汽车有限公司是国内知名的教练车、客车、载货汽车生产基地,公司集研制开发：东风尖头教练车、东风原厂尖头教练车、东风多排座教练车、东风平头教练车、东风原厂平头教练车、半挂教练车、客车教练车、教练车配件等。"/>
+		<link href="images/style.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="images/miaov.js"></script>
+		<script type="text/javascript" src="js/jquery-1.4.4.min.js" ></script>
+		<script type="text/javascript" src="images/min.js" ></script>
+		<script type="text/javascript" src="js/common-tool.js"></script>
+		<script type="text/javascript" src="js/jquery.Xslider.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				ajax("product/getAll.nut", null, 
+					function(data, textStatus, XMLHttpRequest){
+					$.each(data,function(i){
+						$('#ulProList').append('<li><a href="#">'+data[i].name+'</a></li>');
+						if (i==0) {
+							$('.sb').append('<a href="#">'+data[i].name+'</a>');
+						} else {
+							$('.sb').after('<li><a href="#">'+data[i].name+'</a></li>');
+						}
+						if (i < 8) {
+							$('.right_bottom1 > ul').append('<li onmouseout="this.style.border=\'1px solid #dddddd\'" onmouseover="this.style.border=\'1px solid #f00\'">'+
+							'<a href="#"><img src="'+data[i].picPath+'"/></a><br /><a href="#">'+data[i].name+'</a></li>');
+						}
+					});
+				});
+				
+				// 焦点图片淡隐淡现
+				$("#slider3").Xslider({
+					affect:'fade',
+					ctag: 'div'
+				});
+				// 友情链接
+				ajax("links/allByPage.nut", {"page":1,"rows":20,"flag":1},
+					function(data, textStatus, XMLHttpRequest) {
+						$.each(data.rows, function(i, v){
+							$('#friendLink').append('<a href="'+v.linkUrl+'" target="_blank">'+v.linkName+'</a>');
+						});
+					}
+				);
+				// 外部新闻
+				ajax("links/allByPage.nut", {"page":1,"rows":20,"flag":2},
+					function(data, textStatus, XMLHttpRequest) {
+						$.each(data.rows, function(i, v){
+							var randowIndex = Math.round(Math.random() * 4);
+							var tempClass = randowIndex > colors.length ? '' : 'class="' + colors[randowIndex] + '"';
+							$('#div1').append('<a href="'+v.linkUrl+'" '+tempClass+' >'+v.linkName+'</a>');
+						});
+						showOutNews();
+					}
+				);
+			});
+		</script>
+	</head>
+	<body>
+		<!--top-->
+		<div class="top1">
+			<div class="top1-1">
+				<div class="top1-2">
+					<a href="index.html">www.dfjlc88.com</a>网站欢迎您的到来！咨询电话:0722-335069！
+				</div>
+				<div class="top1-3">
+					<a style="cursor: hand" onclick='this.style.behavior="url(#default#homepage)";this.setHomePage("http://www.dfjlc88.com");'>
+						<font size=2>·设为首页</font>
+					</a>
+					<a onclick="window.external.AddFavorite(location.href,document.title)" style="cursor: hand;">
+						<font size=2>·加入收藏 </font>
+					</a>
+					<a href="contact.html"><font size=2>·联系我们</font></a>
+				</div>
+			</div>
+		</div>
+		<div class="top2">
+			<div class="top2-1"></div>
+		</div>
+		<div class="top3">
+			<div class="top_nav">
+				<ul id="jsddm">
+					<li>
+						<a href="index.html">网站首页</a>
+					</li>
+					<li>
+						<a href="companyDesc.html">公司简介</a>
+						<ul>
+							<li>
+								<a href="companyDesc.html">公司概述</a>
+							</li>
+							<li>
+								<a href="companyHonor.html">资质荣誉</a>
+							</li>
+							<li>
+								<a href="facilityShow.html">设备展示</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="proList.html">产品中心</a>
+						<ul id="ulProList">
+						</ul>
+					</li>
+					<li>
+						<a href="newsList.html">新闻动态</a>
+					</li>
+					<li>
+						<a href="specialFunc.html">专用功能</a>
+					</li>
+					<li>
+						<a href="contact.html">联系我们</a>
+						<ul>
+							<li>
+								<a href="message.html">在线留言</a>
+							</li>
+							<li>
+								<a href="contact.html">联系方式</a>
+							</li>
+							<li>
+								<a href="account.html">公司账号</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="slider3" class="slider">
+				<div class="conbox">
+					<div><a href="proDetail.html?proId=1">
+						<img width="1000" height="293" src="images/index-03.jpg" /></a>
+					</div>
+					<div><a href="proDetail.html?proId=1" >
+						<img width="1000" height="293" src="images/index-03.jpg" /></a>
+					</div>
+					<div><a href="proDetail.html?proId=1">
+						<img width="1000" height="293" src="images/index-03.jpg" /></a>
+					</div>
+					<div><a href="proDetail.html?proId=1" >
+						<img width="1000" height="293" src="images/index-03.jpg" /></a>
+					</div>
+					<div><a href="proDetail.html?proId=1">
+						<img width="1000" height="293" src="images/index-03.jpg" /></a></div>
+				</div>
+				<div class="switcher">
+					<a href="#" class="cur">1</a>
+					<a href="#">2</a>
+					<a href="#">3</a>
+					<a href="#">4</a>
+					<a href="#">5</a>
+				</div>
+			</div>
+		<div class="top5">
+			<div class="top5-1">
+				<p>
+					<span>公司公告：</span>我公司一贯奉行明码实价原则,坚决不使用旧品翻新或质量不过关的配件,坚决抵制一切不正当的竞争手段和损害用户利益的行为!
+				</p>
+			</div>
+		</div>
+		<!--top结束-->
+		<!--middle-->
+		<div class="central">
+			<div class="central-1">
+				<!--left-->
+				<div class="left">
+					<div class="left_top">
+						<div class="left_top1-1">
+							<h2>
+								<a href="proList.html">产品中心</a><span>Productcenter</span>
+							</h2>
+						</div>
+					</div>
+					<div class="left_top1-2">
+						<img src="images/index-06.jpg" width="199" height="100" alt=""/>
+					</div>
+					<div class="left_news">
+						<div class="left_news1">
+							<ul>
+								<li class="sb">
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<div class="left_top">
+						<div class="left_top1-1">
+							<h2>
+								<a href="contact.html">联系我们</a><span>Contact us</span>
+							</h2>
+						</div>
+					</div>
+					<div class="left_bottom">
+						<div class="left_bottom1">
+							<h3 class="qq">
+								<a target="_blank"
+									href="http://wpa.qq.com/msgrd?v=3&uin=468085991&site=qq&menu=yes"><img
+										border="0" src="http://wpa.qq.com/pa?p=2:468085991:47"
+										alt="点击这里给我发消息" title="点击这里给我发消息"/>
+								</a>
+							</h3>
+							<h3 class="qq2">
+								<a target="_blank"
+									href="http://wpa.qq.com/msgrd?v=3&uin=412443279&site=qq&menu=yes"><img
+										border="0" src="http://wpa.qq.com/pa?p=2:412443279:47"
+										alt="点击这里给我发消息" title="点击这里给我发消息"/>
+								</a>
+							</h3>
+						</div>
+					</div>
+				</div>
+				<!--left结束-->
+				<!--right-->
+				<div class="ziye_news">
+					<div class="ziye_news_top">
+						<div class="ziye_news_top1">
+							<h3>
+								您现在的位置>>
+								<a href="index.html">网站首页>></a><a href="sellAfter.html">售后承诺>></a>
+							</h3>
+						</div>
+					</div>
+					<div class="content">
+						<div class="ziye_news_subject">
+							售后承诺
+						</div>
+						<div class="ctitle">
+							<span> 更新日期:<label id="lab_updateDate">
+									2012-6-01
+								</label> &nbsp; 作者:<a href="#" id="a_author">教练车推广网</a> &nbsp; 来源于:<a
+								href="http://www.dfjlc88.com">教练车推广网</a>&nbsp; </span>
+							<br />
+						</div>
+						<div id='proDescText'>
+							<p style="MARGIN-RIGHT: 0px" dir="ltr" align="center">
+								<span style="COLOR: #000000"><span
+									style="COLOR: #993300; FONT-SIZE: 10pt"><b><b><span
+												style="COLOR: #bbbb00; FONT-SIZE: large"><img
+														src="images/sellAfter.jpg" width="400" height="120" /> </span> </b> </b>
+								</span> </span>
+							</p>
+							<span style="COLOR: #000000">
+								<p style="MARGIN-RIGHT: 0px" dir="ltr">
+									<br />
+									<strong>一、服务体系<br /> </strong>服务体系是质量管理体系的重要环节，我公司于2005年12月7日通过了ISO9001－2000质量管理体系认证（注册号03605Q10510ROS）。
+									<br />
+									<br />
+									<strong>二、服务保障<br /> </strong>本公司服务是严格履行公司程序文件和质量手册，结合市场和用户的要求，给予保障。
+									<br />
+									<br />
+									<strong>三、服务宗旨<br /> </strong>专业创造价值，诚信铸就未来！
+									<br />
+									<br />
+									<strong>四、服务机构<br /> </strong>在销售公司领导下的售后服务部门，负责公司售后服务工作和管理各驻外机构的服务工作。
+									<br />
+									<br />
+									<strong>五、服务原则<br /> </strong>
+									在用户严格遵循使用说明书，正常操作的情况下，自购车之日起（以车辆出厂登记卡为准）半年内，因设计、制造、装配原因引起的产品机件损坏等一切质量问题，及时向我公司售后服务部门提交书面资料，售后服务部门确认后实行三包服务。
+									<br />
+									具体服务如下：
+									<br />
+									1、三包服务期内的产品质量以包修为主，修理费全免(不包括易损件和电器部分)。
+									<br />
+									2、终身保修。超过包修期内的产品，需更换配件的只收取相关成本费。
+									<br />
+									3、免费培训操作员：
+									<br />
+									⑴由我厂安排高级工程师现场指导，学习理论及实际操作；
+									<br />
+									⑵掌握专用车的基本理论，性能以及功能；
+									<br />
+									⑶按程序能熟练的操作；
+									<br />
+									⑷能进行正常的日常维护，排除一般技术故障。
+									<br />
+									<br />
+									<strong>六、维修分支机构、地点、服务时间、技术力量、联系方式</strong>
+									<br />
+									1、东风底盘（行驶部分）专业维修：可在当地“东风二汽技术服务站"等底盘供应企业指定的技术服务站正常走保、维护。详细地址请参考随车《保修手册》。
+									<br />
+									2、发动机由玉柴服务站提供保修。
+								</p>
+							</span>
+						</div>
+						<br />
+					</div>
+					<!--right结束-->
+			</div>
+		</div>
+		<!--middle结束-->
+		<div class="clear"></div>
+		<div class="zixun">
+			<div class="zixun1">
+				<img src="images/index-10.jpg" alt="" width="998" height="46"/>
+			</div>
+		</div>
+		<div class="news">
+			<div class="news1">
+				<div class="news_left">
+					<img src="images/sinalogo.gif"/>
+					<div class="news_left1">
+						<div id="div1">
+						</div>
+					</div>
+				</div>
+
+				<div class="news_right">
+					<div class="news_right1">
+						<div class="news_right2">
+							<img src="images/05.jpg" alt=""/>
+							<img src="images/03.jpg"/>
+							<a href="buyFlow.html">购车流程<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="message.html">在线订购<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="newsList.html">汽车知识<br />
+							</a>
+						</div>
+					</div>
+					<div class="news_right1">
+						<div class="news_right2">
+							<img src="images/02.jpg" alt=""/>
+							<img src="images/03.jpg"/>
+							<a href="account.html">公司帐号<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="buyOnline.html">在线支付<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="account.html">线下汇款<br />
+							</a>
+						</div>
+					</div>
+					<div class="news_right1">
+						<div class="news_right2">
+							<img src="images/06.jpg" alt=""/>
+							<img src="images/03.jpg"/>
+							<a href="deliver.html">送车上门<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="buySelf.html">客户自提<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="route.html">行车路线<br />
+							</a>
+						</div>
+					</div>
+					<div class="news_right1">
+						<div class="news_right2">
+							<img src="images/07.jpg" alt=""/>
+							<img src="images/03.jpg"/>
+							<a href="quality.html">品质保证<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="sellAfter.html">售后承诺<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="serviceNet.html">服务网点<br />
+							</a>
+						</div>
+					</div>
+					<div class="news_right1">
+						<div class="news_right2">
+							<img src="images/08.jpg" alt=""/>
+							<img src="images/03.jpg"/>
+							<a href="companyDesc.html">关于我们<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="sitemap1.xml">网站地图<br />
+							</a>
+							<img src="images/03.jpg"/>
+							<a href="contact.html">联系我们<br />
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+		<!--bottom-->
+		<div class="bottom1">
+			<div class="bottom1-1">
+				<div class="bottom1-2" id="friendLink">
+					友情链接：
+				</div>
+			</div>
+		</div>
+		<div class="bottom2">
+			<div class="foot">
+				<strong>湖北程力汽车有限公司</strong> 版权所有 Copyright 2012-2015 All Reserved by
+				dfjlc88.com
+				<a href="http://www.dfjlc88.com/sitemap.xml" target="_blank">网站地图</a>
+				<br/>
+					销售经理：
+				<strong>孙经理&nbsp;<font color="red">18727987572</font>
+				</strong>&nbsp;&nbsp;销售热线：0722-335069&nbsp;&nbsp;传真：0722-3311402
+				<br/>
+					企业地址：中国专用汽车之都-湖北省随州市南郊平原冈程力工业园&nbsp;&nbsp;邮编：441300
+					[
+				<a href="login.html" target="_blank">后台登陆</a>]
+				<br/>
+			</div>
+		</div>
+		<!--bottom结束-->
+	</body>
+</html>

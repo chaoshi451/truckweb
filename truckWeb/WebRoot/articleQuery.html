@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>新闻查询页面</title>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" >
+		$(function(){
+			$('#articleGrid').datagrid({
+				url: 'article/allByPage.nut',
+				title: '新闻列表',
+				width: 800,
+				height: 'auto',
+				fitColumns: true,
+				nowrap:false,
+				rownumbers:true,
+				pagination:true,
+				columns:[[
+					{field:'id',hidden:true},
+					{field:'title',title:'新闻标题',width:100},
+					{field:'author',title:'作者',width:80,align:'right'},
+					{field:'lastUpdateDate',title:'修改时间',width:150},
+					{field:'opt', title:'操作', width:80, align:'center',
+						formatter:function(value,rowData){
+							var viewHref = '<a style="color:red;" target="_blank" href="newsDetail.html?articleId='+rowData.id+'">查看</a>';
+							var editHref = '&nbsp;&nbsp;<a style="color:red;" href="javascript:editArticle('+rowData.id+');">编辑</a>';
+							var delHref = '&nbsp;&nbsp;<a style="color:red;" href="javascript:delArticle('+rowData.id+');">删除</a>';
+							return viewHref + editHref + delHref;
+						}
+					}
+				]]
+			});
+		});
+		function editArticle(rowDataId) {
+			articleId = rowDataId;
+			$('#tabs').tabs('close', '修改新闻信息');
+			addTab('修改新闻信息', 'articleAdd.html', 'icon-edit');
+		}
+		function delArticle(articleId) {
+			$.messager.confirm('提示', '您确定概要删除此条信息?', function(r){
+				if (r){
+					ajax("article/delArticle.nut", {"articleId":articleId}, 
+						function(data, textStatus, XMLHttpRequest){
+							if (data) {
+								$.messager.alert('提示','删除新闻信息成功！');
+								$('#articleGrid').datagrid("reload");
+							}
+					});
+				}
+			});
+		}
+	</script>
+  </head>
+  <body>
+	<table id="articleGrid"></table>
+  </body>
+</html>

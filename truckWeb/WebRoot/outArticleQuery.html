@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>外部新闻页面</title>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" >
+		$(function(){
+			var lastIndex;
+			$('#outLinksGrid').datagrid({
+				toolbar:[{
+					text:'添加',
+					iconCls:'icon-add',
+					handler:function(){
+						$('#outLinksGrid').datagrid('endEdit', lastIndex);
+						$('#outLinksGrid').datagrid('appendRow',{
+							id:'',
+							linkName:'',
+							linkUrl:''
+						});
+						var lastIndex = $('#outLinksGrid').datagrid('getRows').length-1;
+						$('#outLinksGrid').datagrid('selectRow', lastIndex);
+						$('#outLinksGrid').datagrid('beginEdit', lastIndex);
+					}
+				},'-',{
+					text:'保存',
+					iconCls:'icon-save',
+					handler:function(){
+						$('#outLinksGrid').datagrid('acceptChanges');
+						var data = $.toJSON($('#outLinksGrid').datagrid('getData').rows);
+						ajax("links/saveAllLinks.nut", {"links":data, "flag":2}, 
+							function(data, textStatus, XMLHttpRequest){
+								if (data == "ok") {
+									$.messager.alert('提示','保存成功！');
+									$('#outLinksGrid').datagrid("reload");
+								}
+						});
+					}
+				}],
+				url: 'links/allByPage.nut',
+				title: '外部新闻列表',
+				width: 800,
+				height: 'auto',
+				fitColumns: true,
+				nowrap:false,
+				rownumbers:true,
+				pagination:true,
+				queryParams:{"flag":2},
+				columns:[[
+					{field:'id',hidden:true},
+					{field:'linkName',title:'新闻标题',width:100,
+						editor:{
+							type:'text',
+							options:{required:true}
+						}
+					},
+					{field:'linkUrl',title:'链接地址',width:80,align:'right',
+						editor:{
+							type:'text',
+							options:{required:true}
+						}
+					},
+					{field:'opt', title:'操作', width:80, align:'center',
+						formatter:function(value,rowData,rowIndex){
+							var param = rowIndex;
+							if (rowData.id) {
+								param += ','+rowData.id; 
+							}
+							var delHref = '&nbsp;&nbsp;<a style="color:red;" href="javascript:delLinks('+param+');">删除</a>';
+							return delHref;
+						}
+					}
+				]],
+				onDblClickRow:function(rowIndex){
+					if (lastIndex != rowIndex){
+						$('#outLinksGrid').datagrid('endEdit', lastIndex);
+						$('#outLinksGrid').datagrid('beginEdit', rowIndex);
+					}
+					lastIndex = rowIndex;
+				}
+			});
+		});
+		function delLinks(rowIndex, linksId) {
+			if (!linksId || linksId == 0) {
+				$('#outLinksGrid').datagrid("deleteRow", rowIndex);
+				return;
+			}
+			$.messager.confirm('提示', '您确定概要删除此条信息?', function(r){
+				if (r){
+					ajax("links/delLinks.nut", {"linksId":linksId}, 
+						function(data, textStatus, XMLHttpRequest){
+							if (data) {
+								$.messager.alert('提示','删除外部新闻成功！');
+								$('#outLinksGrid').datagrid("reload");
+							}
+					});
+				}
+			});
+		}
+	</script>
+  </head>
+  <body>
+	<table id="outLinksGrid"></table>
+  </body>
+</html>

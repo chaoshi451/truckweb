@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>添加新闻页</title>
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<style type="text/css">
+			#attTable{
+				width:640px;
+				height:100%;
+				font-size:12px;
+				padding: 0px;
+				border-collapse:collapse;
+			}
+			#attTable td{
+				border:1px solid green;
+				text-align: left;
+				height: 25px;
+			}
+		</style>
+		<script type="text/javascript">
+			var articleContent;
+			$(function(){
+				$('#p').panel({   
+					width:'1000',   
+					height:'auto',
+					title: '添加新闻',
+					tools: [{   
+						iconCls:'icon-save',
+						handler: function(){
+							
+						}   
+					}]   
+				});
+				if(!CKEDITOR.instances.proText){  //判定proText是否存在 
+                    articleContent= CKEDITOR.replace("proText");
+                }else{   
+                    var editor2 = CKEDITOR.instances['proText'];   
+					if(editor2) editor2.destroy(true); //销毁编辑器 proText,然后新增一个 
+                    articleContent = CKEDITOR.replace('proText');   
+                }
+				if (articleId) {
+					ajax("article/getArticleById.nut", {"articleId":articleId}, 
+						function(data, textStatus, XMLHttpRequest){
+						$('#title').val(data.title);
+						$('#author').val(data.author);
+						articleContent.setData(data.content);
+					});
+				} else {
+					articleId = 0;
+				}
+			});
+			
+			function doSubmit() {
+				ajax("article/saveNewArticle.nut", {"article.id":articleId,"article.title":$('#title').val(),"article.author":$('#author').val(),"article.content":articleContent.getData()}, 
+					function(data, textStatus, XMLHttpRequest){
+						if (data) {
+							$.messager.alert('提示','添加新闻成功！','info',function(){
+								var icon = getIcon('22');
+								$('#tabs').tabs('close', '添加新闻');
+								addTab('新闻列表', 'articleQuery.html', icon);
+							});
+						}
+				});
+			}
+	</script>
+	</head>
+	<body>
+		<div id="p" style="padding: 10px;">
+			<fieldset>
+				<form action="${ctx}/admin/article/add" method="post" id="mainform">
+					<!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
+					<p>
+						新闻标题：<span style="color:red;">*</span>
+						<input class="easyui-validatebox inputText" type="text" id="title" name="title" required="true"  size="50"/>
+						<br/>
+						<br/>
+					</p>
+					<p>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作者：<span style="color:red;">*</span>
+						<input class="easyui-validatebox inputText" type="text" name="author" id="author" required="true" size="25"/>
+						<br />
+						<br />
+					</p>
+					<p>
+						<textarea id="proText" rows="5" cols="10" class="ckeditor"></textarea>
+					</p>
+					<p>
+						<span style="text-align:right;width:900px;">
+							<a href="javaScript:doSubmit();" class="easyui-linkbutton" iconCls="icon-ok">提交</a>
+						</span>
+					</p>
+				</form>
+			</fieldset>
+		</div>
+	</body>
+</html>
